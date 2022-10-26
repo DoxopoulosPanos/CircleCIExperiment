@@ -12,23 +12,23 @@ jobs:
   #             --template-file template.yml \
   #             --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
   #             --region us-east-1
-  # Exercise: Config and Deployment
-configure_infrastructure: 
-  docker:
-    - image: python:3.7-alpine3.11
-  steps:
-    - checkout
-    - add_ssh_keys:
-            # You can get this ID in the section where you registered the SSH Key
-            fingerprints: ["d3:3a:9c:8c:a6:e2:54:f7:bd:6f:c2:1b:9e:46:4d:6a"] 
-    - run:
-        name: Install Ansible
-        command: |
-          apk add --update ansible
-    - run:
-        name: Run Playbook and Configure server
-        command: |
-          ansible-playbook -i [inventory-file] [playbook-file]
+    # Exercise: Config and Deployment
+  configure_infrastructure: 
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+              # You can get this ID in the section where you registered the SSH Key
+              fingerprints: ["d3:3a:9c:8c:a6:e2:54:f7:bd:6f:c2:1b:9e:46:4d:6a"] 
+      - run:
+          name: Install Ansible
+          command: |
+            apk add --update ansible
+      - run:
+          name: Run Playbook and Configure server
+          command: |
+            ansible-playbook -i [inventory-file] [playbook-file]
 
 # Sequential workflow
 workflows:
