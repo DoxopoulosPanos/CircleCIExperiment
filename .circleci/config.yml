@@ -33,6 +33,10 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:Project,Values=udacity" \
               --output text >> inventory
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - inventory
   configure_infrastructure: 
     docker:
       - image: python:3.7-alpine3.11
@@ -45,10 +49,12 @@ jobs:
           name: Install Ansible
           command: |
             apk add --update ansible
+      - attach_workspace:
+          at: ~/
       - run:
           name: Run Playbook and Configure server
           command: |
-            ansible-playbook -i inventory main.yml
+            ansible-playbook -i ~/inventory main.yml
 
 # Sequential workflow
 workflows:
