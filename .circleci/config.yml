@@ -38,7 +38,7 @@ jobs:
               --filters "Name=tag:Project,Values=udacity" \
               --output text >> inventory
       - persist_to_workspace:
-          root: ~/
+          root: .
           paths:
             - inventory
   configure_infrastructure: 
