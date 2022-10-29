@@ -74,10 +74,10 @@ jobs:
       - run:
           name: smoke test
           command: |
-            u= $(head -2 ~/inventory | tail -1)
-            u+=":3000"
+            var=$(sed '2q;d' ~/inventory)
+            var+=":3000"
             # Test if website exists
-            if curl -s --head $u 
+            if curl -s --head $var
             then
               return 0
             else
