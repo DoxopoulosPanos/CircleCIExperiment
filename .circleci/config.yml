@@ -74,7 +74,7 @@ jobs:
       - run:
           name: smoke test
           command: |
-            u= $(head -2 inventory | tail -1)
+            u= $(head -2 ~/inventory | tail -1)
             u+=":3000"
             # Test if website exists
             if curl -s --head $u 
