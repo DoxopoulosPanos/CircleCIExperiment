@@ -59,6 +59,26 @@ jobs:
           name: Run Playbook and Configure server
           command: |
             ansible-playbook -i ~/inventory main.yml
+  smoke_test:
+    docker:
+      - image: alpine:latest
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/
+      - run: apk add --update curl
+      - run:
+          name: smoke test
+          command: |
+            u= $(head -2 inventory | tail -1)
+            u+=":3000"
+            # Test if website exists
+            if curl -s --head $u 
+            then
+              return 0
+            else
+              return 1
+            fi
 
 # Sequential workflow
 workflows:
@@ -72,3 +92,6 @@ workflows:
         - configure_infrastructure:
             requires:
               - create_inventory
+        - smoke_test:
+            requires:
+              - configure_infrastructure
