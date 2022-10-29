@@ -59,6 +59,10 @@ jobs:
           name: Run Playbook and Configure server
           command: |
             ansible-playbook -i ~/inventory main.yml
+      - persist_to_workspace:
+          root: .
+          paths:
+            - inventory
   smoke_test:
     docker:
       - image: alpine:latest
