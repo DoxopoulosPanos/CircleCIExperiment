@@ -97,10 +97,9 @@ jobs:
       - destroy_environment_in_failure
   fail_smoke_test:
     docker:
-      - image: alpine:latest
+      - image: amazon/aws-cli
     steps:
       - checkout
-      - run: apk add --update curl
       - run:
           name: smoke test
           # simulate error
