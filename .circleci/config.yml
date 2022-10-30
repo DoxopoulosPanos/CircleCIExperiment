@@ -95,32 +95,34 @@ jobs:
               return 1
             fi
       - destroy_environment_in_failure
-  fail_smoke_test:
+  create_and_deploy_front_end:
     docker:
       - image: amazon/aws-cli
     steps:
       - checkout
       - run:
-          name: smoke test
-          # simulate error
-          command: return 1  
-      - destroy_environment_in_failure
+          name: Execute bucket.yml - Create Cloudformation Stack
+          command: |
+            aws cloudformation deploy \
+            --template-file bucket.yml \
+            --stack-name stack-create-bucket-${CIRCLE_WORKFLOW_ID:0:5} \
+            --parameter-overrides MyBucketName="mybucket-${CIRCLE_WORKFLOW_ID:0:5}"
+      # Uncomment the step below if yoou wish to upload all contents of the current directory to the S3 bucket
+      - run: aws s3 sync . s3://mybucket-${CIRCLE_WORKFLOW_ID:0:5} --delete
 
 # Sequential workflow
 workflows:
   # Name the workflow
   my_workflow:
       jobs:
-        - create_infrastructure
-        - create_inventory:
-            requires:
-              - create_infrastructure
-        - configure_infrastructure:
-            requires:
-              - create_inventory
-        - smoke_test:
-            requires:
-              - configure_infrastructure
-        - fail_smoke_test:
-            requires:
-              - smoke_test
+        # - create_infrastructure
+        # - create_inventory:
+        #     requires:
+        #       - create_infrastructure
+        # - configure_infrastructure:
+        #     requires:
+        #       - create_inventory
+        # - smoke_test:
+        #     requires:
+        #       - configure_infrastructure
+        - create_and_deploy_front_end
