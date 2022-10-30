@@ -1,4 +1,13 @@
 version: 2.1
+commands:
+   # Exercise - Rollback
+   destroy_environment_in_failure:
+     steps:
+       - run:
+           name: Destroy environment
+           when: on_fail
+           command: |
+             aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5}
 jobs:
   create_infrastructure: 
     docker:
@@ -85,6 +94,18 @@ jobs:
             else
               return 1
             fi
+      - destroy_environment_in_failure
+  fail_smoke_test:
+    docker:
+      - image: alpine:latest
+    steps:
+      - checkout
+      - run: apk add --update curl
+      - run:
+          name: smoke test
+          # simulate error
+          command: return 1  
+      - destroy_environment_in_failure
 
 # Sequential workflow
 workflows:
